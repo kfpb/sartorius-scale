@@ -1,4 +1,5 @@
 const net = require('net');
+const compression = require('compression');
 const express = require('express');
 const sse = require('express-sse');
 const app = express();
@@ -10,6 +11,8 @@ const client = new net.Socket();
 client.connect(moxaPort, moxaHost, () => {
   console.log('Terhubung ke Moxa');
 });
+app.use(compression());
+app.use(express.static('public'));
 
 const scaleDataStream = new sse(); 
 const scaleDataArray = [];
@@ -49,7 +52,7 @@ client.on('data', (data) => {
 
 app.get('/api/scale-data', scaleDataStream.init);
 
-const PORT = 3000;
+const PORT = 4000;
 app.listen(PORT, () => {
   console.log(`Server API berjalan di http://localhost:${PORT}`);
   requestScaleData();
